@@ -1,2 +1,2 @@
 # Pushsafer_Notfication_RPi_Aga_Temperature_Monitor
-Project to record and report aga external temperature and send an alert to iphone if temperature drops.
+Project to record and report aga external temperature and send an alert to iphone if temperature drops.  The RPi uses is DS18B20 temperture sensor attached to the side (external) of the aga.  A second DHT11 sensor monitors the ambient humidity and temperature.  The Pushsafer app install on an iphone recieves updates (every 3 hours in daytime), alert (if the aga temp drops below threshold of 50 C), and summary of data for previous day.
