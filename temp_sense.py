@@ -165,7 +165,7 @@ class Monitor:
     def createdataplot(self):
         meanT=sum(self.temp_list)/len(self.temp_list)
         humdata=np.array(self.humidity_list)
-        humiditysm=signal.savgol_filter(humdata, 8, 3)
+        humiditysm=signal.savgol_filter(humdata, 9, 3)
         mean_humidity=humiditysm.mean()
         self.humidity_list=humiditysm.tolist()
         data={'time':self.time_list,'temp':self.temp_list, 'humidity':self.humidity_list, 'ambient':self.ambient_list}
