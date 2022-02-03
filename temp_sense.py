@@ -176,13 +176,13 @@ class Monitor:
         df.to_csv('Temp_log/temp-'+file[:-7]+'.csv')
         fig, ax1=plt.subplots()
         color = 'tab:red'
-        ax1.plot(df['hour-time'],df['temp'], color=color)
+        ax1.scatter(df['hour-time'],df['temp'], color=color, marker='.')
         ax1.set_xlabel('time')
         ax1.set_ylabel('Aga Temp', color=color)
         ax1.tick_params(axis='y', labelcolor=color)
         ax2 = ax1.twinx()
         color = 'tab:blue'
-        ax2.plot(df['hour-time'],df['humidity'], color=color)
+        ax2.scatter(df['hour-time'],df['humidity'], color=color, marker='.')
         ax2.set_ylabel('Humidity %', color=color)
         ax2.tick_params(axis='y', labelcolor=color)
         ax2.set_ylim(20,80)
