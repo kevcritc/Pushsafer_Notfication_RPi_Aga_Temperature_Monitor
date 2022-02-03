@@ -112,8 +112,8 @@ class DS18B20:
 
 class Monitor:
     """ Monitor the temperature"""
-    def __init__(self, morning=7, evening=22, mint=59, waittime=3, threshold=50, interval_time=58, agawait_off=300, error_sleep=300, summarytime=10):
-        self.waittime=waittime
+    def __init__(self, morning=7, evening=22, mint=59, interval=3, threshold=50, interval_time=58, agawait_off=300, error_sleep=300, summarytime=10):
+        self.waittime=interval
         self.morning=morning
         self.mint=mint
         self.evening=evening
@@ -170,18 +170,19 @@ class Monitor:
         self.humidity_list=humiditysm.tolist()
         data={'time':self.time_list,'temp':self.temp_list, 'humidity':self.humidity_list, 'ambient':self.ambient_list}
         df=pd.DataFrame(data=data)
+        df['hour-time']=df['time']/60
         filename=str(self.dtime)
         file=filename.replace('/','-')
         df.to_csv('Temp_log/temp-'+file[:-7]+'.csv')
         fig, ax1=plt.subplots()
         color = 'tab:red'
-        ax1.plot(df['time'],df['temp'], color=color)
-        ax1.set_xlabel('time (min)')
+        ax1.plot(df['hour-time'],df['temp'], color=color)
+        ax1.set_xlabel('time')
         ax1.set_ylabel('Aga Temp', color=color)
         ax1.tick_params(axis='y', labelcolor=color)
         ax2 = ax1.twinx()
         color = 'tab:blue'
-        ax2.plot(df['time'],df['humidity'], color=color)
+        ax2.plot(df['hour-time'],df['humidity'], color=color)
         ax2.set_ylabel('Humidity %', color=color)
         ax2.tick_params(axis='y', labelcolor=color)
         ax2.set_ylim(20,80)
@@ -190,16 +191,16 @@ class Monitor:
         plt.close()
         time.sleep(2)
         del df
-        
+        self.time_list=[]
+        self.temp_list=[]
+        self.humidity_list=[]
+        self.ambient_list=[]
         if self.dtime.hour>self.morning and self.dtime.hour<self.evening:
             file1="Temp_log/plot.png"
             self.pic_string=self.image_encode(file1)
             mess=Message(k="<Your Private>",deviceID='<ID>',m='Update',t='The mean temperature is '+str(meanT)[:4]+' and the mean humidity is '+str(mean_humidity)[:2], i='1',s='0',v='0',p=self.pic_string, a='1')
             mess.send()
-            self.time_list=[]
-            self.temp_list=[]
-            self.humidity_list=[]
-            self.ambient_list=[]
+        
     
     def image_encode(self,file):
         self.encoded = base64.b64encode(open(file, "rb").read())
@@ -246,7 +247,7 @@ if __name__ == "__main__":
     inmess=Message(k="<Your Private>",deviceID='<ID>',m='The code started',t='Test', i='1',s='0',v='0', a='1')
     inmess.send()
     
-    mon_temp=Monitor(waittime=3,summarytime=8)
+    mon_temp=Monitor(interval=3,summarytime=8)
     while True:
         mon_temp.measure()
         minute=int(mon_temp.dtime.minute)
